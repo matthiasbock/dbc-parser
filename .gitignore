@@ -1,0 +1,19 @@
+# Temporary
+*.bak
+*~
+.*.swp
+
+# Binary
+*.pyc
+
+# Input / Output
+*.dbc
+*.DBC
+*.c
+
+# Eclipse
+.project
+.pydevproject
+.metadata
+.settings
+
