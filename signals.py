@@ -10,8 +10,8 @@ class SignalValueType:
     DOUBLE = "SIG_VALTYPE_ 2"
 
 class SignalByteOrder:
-    INTEL = 1
-    MOTOROLA = 0
+    INTEL = "1"
+    MOTOROLA = "0"
 
 class Signal:
     #
@@ -28,7 +28,7 @@ class Signal:
     #
     def clear(self):
         self.name = ""
-        self.type = SignalValueType.UNSIGNED
+        self.valuetype = SignalValueType.UNSIGNED
         self.startbit = 0
         self.bitlength = 0
         self.byteorder = SignalByteOrder.INTEL
@@ -51,24 +51,27 @@ class Signal:
         self.name = parts[2]
         layout = parts[4]    # 36|12@1+
         p = layout.split("|")
-        self.startbit = p[0]
+        self.startbit = int(p[0])
         q = p[1].split("@")
-        self.bitlength = q[0]
+        self.bitlength = int(q[0])
         self.byteorder = q[1][0]
-        self.type = q[1][1]
+        self.valuetype = q[1][1]
         factor_offset = parts[5]    # (1,0)
         p = factor_offset.split(",")
-        self.factor = p[0][1:]
-        self.offset = p[1][:-1]
+        self.factor = int(p[0][1:])
+        self.offset = int(p[1][:-1])
         min_max = parts[6]    # [0|255]
         p = min_max.split("|")
-        self.minimum = p[0][1:]
-        self.maximum = p[1][:-1]
+        self.minimum = int(p[0][1:])
+        self.maximum = int(p[1][:-1])
         self.unit = parts[7][1:-1]    # in quotes
 
     #
     # Export signal as string for DBC file
     #
     def __str__(self):
-        line = " SG_ " + self.name + "\n"
+        layout = str(self.startbit) + "|" + str(self.bitlength) + "@" + self.byteorder + self.valuetype
+        factor_offset = "(" + str(self.factor) + "," + str(self.offset) + ")"
+        min_max = "[" + str(self.minimum) + "|" + str(self.maximum) + "]"
+        line = " SG_ " + self.name + " : " + layout + " " + factor_offset + " " + min_max + " \"" + self.unit + "\" Vector__XXX\n"
         return line
