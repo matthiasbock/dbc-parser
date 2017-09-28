@@ -19,7 +19,7 @@ class DBC:
         if s is None:
             self.clear()
         else:
-            self.parse(s, debug)
+            self.parse(s, debug=debug)
 
     #
     # Create and clear all object properties
@@ -32,8 +32,8 @@ class DBC:
     #
     # Import object from DBC file
     #
-    def load(self, filename):
-        self.parse(open(filename, "r").read())
+    def load(self, filename, debug=False):
+        self.parse(open(filename, "r").read(), debug=debug)
 
     #
     # Parse object properties from string
@@ -71,13 +71,15 @@ class DBC:
                 # begin sub-block
                 buffer = ""
                 if line in [PARSE_NS, PARSE_BS, PARSE_BU]:
-                    state = parts[0]
+                    state = line
                     if debug:
                         print "Parsing " + str(state) + "..."
                 elif len(line) > 3 and line[:4] == PARSE_BO:
                     state = PARSE_BO
                     if debug:
                         print "Parsing " + str(state) + "..."
+                else:
+                    print "Warning: Unrecognized statement: " + line
 
             if state == PARSE_NS:
                 # empty line: return to top
@@ -110,8 +112,14 @@ class DBC:
     #
     def __str__(self):
         version = "VERSION \"" + self.version + "\"\n"
+
+        namespace = "NS_ : \n"
+        for ns in self.namespace:
+            namespace += "\t" + ns + "\n"
+
         messages = ""
         for message in self.messages:
             messages += str(message) + "\n"
-        buffer = version + "\n" + messages
+
+        buffer = version + "\n" + namespace + "\n" + "BS_:\n\nBU_:\n\n" + messages
         return buffer

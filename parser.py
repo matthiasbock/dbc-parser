@@ -13,6 +13,6 @@ if len(argv) < 2:
 filename = argv[1]
 
 dbc = DBC()
-dbc.load(filename)
+dbc.load(filename)    # , debug=True)
 
 print dbc
